@@ -1,9 +1,9 @@
 # AI-Assisted Literature Review Engine (Intelligent LCI Maker)
 
 ## Project Overview
-This repository contains an AI-assisted research workflow for literature review in the domain of fertilizers, life cycle assessment (LCA), and sustainability. The current system automatically searches major academic sources, merges and cleans records, filters them with rule-based and semantic methods, scores relevance, and exports a structured Excel sheet that includes both static metadata and dynamic AI-generated observations. The project is intentionally practical: it helps researchers move from broad query design to an analyzable shortlist of papers with less manual effort.
+This repository contains an AI-assisted research workflow for literature review that is designed to be domain-flexible. The current implementation can automatically search major academic sources, merge and clean records, filter them with rule-based and semantic methods, score relevance, and export a structured Excel sheet that includes both static metadata and dynamic AI-generated observations. The project is intentionally practical: it helps researchers move from broad query design to an analyzable shortlist of papers with less manual effort.
 
-This project is still in the development stage and is not yet complete. The current phase (Phase 1) focuses on making literature discovery, ranking, and extraction more consistent and reproducible. The next phase (Phase 2) will be much larger in scope: an AI-assisted Life Cycle Inventory (LCI) maker that supports experts in constructing LCI datasets based on their specific needs. In that phase, the system will review public studies and published papers, learn patterns from existing inventories, and clearly cite source publications so domain experts can build new inventories with traceable evidence.
+This project is still in the development stage and is not yet complete. The current phase (Phase 1) focuses on making literature discovery, ranking, and extraction more consistent and reproducible. The next phase (Phase 2) will be much larger in scope: an AI-assisted Life Cycle Inventory (LCI) maker that supports experts in constructing LCI datasets based on their specific needs. In that phase, the system will review public studies and published papers, learn patterns from existing inventories, and clearly cite source publications so domain experts can build new inventories with traceable evidence. The fertilizer and LCA settings currently seen in configuration are an example use case, not a hard project limitation; future studies can target different subjects by changing the research description, query set, and dynamic extraction headers.
 
 ## Development Status
 - Status: Active development
@@ -13,6 +13,11 @@ This project is still in the development stage and is not yet complete. The curr
 
 ## Two-Phase Vision
 
+### Domain Flexibility (Important)
+The engine is built to support changing research subjects over time. While the current sample configuration is focused on fertilizer and LCA studies, the architecture is intentionally generic.
+
+This means future work can shift to other topics without rewriting the core pipeline. In practice, users can adapt the system by updating query logic, keyword constraints, year ranges, scoring weights, and dynamic output headers in configuration, while reusing the same retrieval, ranking, and export engine.
+
 ### Phase 1 (Current): AI-Assisted Literature Review Tool
 Phase 1 is designed to reduce repetitive screening tasks and increase consistency in paper evaluation. The tool:
 - runs multi-source paper search from configurable research queries,
@@ -21,6 +26,8 @@ Phase 1 is designed to reduce repetitive screening tasks and increase consistenc
 - combines relevance with citation and recency signals,
 - uses a local LLM to produce dynamic, paper-grounded observations,
 - exports all results to a structured Excel workbook.
+
+In development terms, Phase 1 is the evidence preparation layer. It is not limited to one scientific subject. The same mechanics can be reused for different research domains as long as the user provides domain-appropriate query design and scoring configuration.
 
 ### Phase 2 (Planned): AI-Assisted Life Cycle Inventory (LCI) Maker
 Phase 2 will expand from paper review into inventory construction support for experts. The goal is to help experts build fit-for-purpose LCIs by:
@@ -32,7 +39,14 @@ Phase 2 will expand from paper review into inventory construction support for ex
 
 In short, Phase 2 is intended to move from "finding and understanding evidence" to "building citation-backed inventory assets" for real LCA workflows.
 
+Phase 2 is expected to be much more extensive than Phase 1. It will focus on guided inventory construction where experts remain in control, but AI accelerates evidence gathering, structure proposal, citation linking, and iterative refinement of candidate inventory elements.
+
 ## Why This Architecture
+
+### Why keep the project domain-agnostic?
+Research priorities change over time. A fixed-topic tool becomes less useful as soon as the subject changes. This project avoids that by keeping the retrieval, filtering, ranking, and extraction engine generic while exposing topic-specific behavior through configuration.
+
+As a result, one core engine can support multiple study tracks over the lifetime of the project. The current fertilizer-related setup is a reference scenario that validates the workflow, but it is not the final or only target domain.
 
 ### Why use external APIs?
 The project uses multiple literature APIs because no single source provides complete coverage, metadata consistency, and availability for all topics.
@@ -114,6 +128,8 @@ You define domain intent in:
 - `research.queries`
 - `research.year_min` / `research.year_max`
 
+To change subjects in future studies, you primarily update these fields and revise `keywords` plus `excel_export.dynamic_headers` to match the new research questions.
+
 ### Filtering and limits
 You control throughput using:
 - `limits.max_initial_results_per_source`
@@ -178,7 +194,7 @@ The exported workbook combines:
 - API metadata quality varies across providers.
 - Some records contain incomplete abstracts or missing fields.
 - Dynamic field quality depends on local model capability and prompt tuning.
-- Domain coverage is currently tuned to fertilizer/LCA research scope.
+- Sample configuration is currently tuned to a fertilizer/LCA scenario; broader multi-domain preset packs are still pending.
 - No GUI is included yet (CLI workflow only).
 
 ## Planned GUI Direction
