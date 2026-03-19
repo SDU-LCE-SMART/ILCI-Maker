@@ -8,7 +8,7 @@
 | Contact person | mhna@igt.sdu.dk |
 | Open-source plan | This repository will be made open source after the publication paper is submitted. |
 
-## Project Overview
+## Tool Overview
 This project is a working prototype which already performs end-to-end literature review automation: it accepts configurable research queries, collects records from multiple scholarly APIs, removes duplicates, applies filters, ranks papers with combined scoring logic, runs local LLM extraction for dynamic analysis fields, and exports structured outputs to Excel. The current fertilizer-focused setup is used as a sample prototyping scenario to validate the pipeline against real-world LCA-style search and extraction complexity.
 
 The project is still in the improvement stage and is intentionally evolving. The architecture is domain-flexible, which means the same engine can be used for any topic, title, and study field by changing configuration (queries, keywords, year range, scoring weights, and dynamic headers). Phase 1 is the active implementation today (AI-assisted literature review). Phase 2 will expand this into a larger AI-assisted LCI maker that helps experts draft inventory structures by learning from published studies and linking each suggested element to explicit source evidence.
