@@ -1,171 +1,214 @@
 # AI-Assisted Literature Review Engine (Intelligent LCI Maker)
 
 ## Project Overview
-This repository contains an AI-assisted research workflow for literature review that is designed to be domain-flexible. The current implementation can automatically search major academic sources, merge and clean records, filter them with rule-based and semantic methods, score relevance, and export a structured Excel sheet that includes both static metadata and dynamic AI-generated observations. The project is intentionally practical: it helps researchers move from broad query design to an analyzable shortlist of papers with less manual effort.
+This project is a working prototype, not only a proposal. The code already performs end-to-end literature review automation: it accepts configurable research queries, collects records from multiple scholarly APIs, removes duplicates, applies filters, ranks papers with combined scoring logic, runs local LLM extraction for dynamic analysis fields, and exports structured outputs to Excel. The current fertilizer-focused setup is used as a sample prototyping scenario to validate the pipeline against real-world LCA-style search and extraction complexity.
 
-This project is still in the development stage and is not yet complete. The current phase (Phase 1) focuses on making literature discovery, ranking, and extraction more consistent and reproducible. The next phase (Phase 2) will be much larger in scope: an AI-assisted Life Cycle Inventory (LCI) maker that supports experts in constructing LCI datasets based on their specific needs. In that phase, the system will review public studies and published papers, learn patterns from existing inventories, and clearly cite source publications so domain experts can build new inventories with traceable evidence. The fertilizer and LCA settings currently seen in configuration are an example use case, not a hard project limitation; future studies can target different subjects by changing the research description, query set, and dynamic extraction headers.
+The project is still in the improvement stage and is intentionally evolving. The architecture is domain-flexible, which means the same engine can be used for any topic, title, and study field by changing configuration (queries, keywords, year range, scoring weights, and dynamic headers). Phase 1 is the active implementation today (AI-assisted literature review). Phase 2 will expand this into a larger AI-assisted LCI maker that helps experts draft inventory structures by learning from published studies and linking each suggested element to explicit source evidence.
 
 ## Development Status
 - Status: Active development
-- Maturity: Prototype / research tooling
-- Current phase: Phase 1 (AI-assisted literature review)
-- Next phase: Phase 2 (AI-assisted LCI maker)
+- Delivery stage: Prototype implemented, currently being improved
+- Current phase: Phase 1 (AI-assisted literature review engine)
+- Next phase: Phase 2 (AI-assisted, citation-grounded LCI maker)
+
+## Evidence That the Prototype Is Implemented
+The repository includes executable code paths, not placeholder stubs:
+
+- Pipeline entrypoint in `main.py` that loads environment/config and executes the engine.
+- Retrieval engine in `engine/search/search.py` with real API requests, retry logic, pagination, and source-specific metadata mapping.
+- Processing and ranking engine in `engine/engine.py` for query expansion, year filtering, duplicate removal, keyword filtering, semantic ranking, and weighted scoring.
+- Local LLM extraction in `engine/engine.py` to fill dynamic review fields using paper-grounded prompts.
+- Export pipeline in `engine/engine.py` that writes formatted Excel output using configured static and dynamic headers.
+- User-driven behavior in `config/user_config.yaml` so study setup can be changed without code edits.
+
+This means the system is already usable for iterative research work while engineering improvements continue.
+
+## Why Fertilizer Is Mentioned Today
+Fertilizer/LCA is currently a sample prototype scenario used to test difficult conditions (mixed terminology, domain-specific keywords, and structured extraction needs). It is not a hard limit.
+
+To switch domains, update configuration only:
+- `research.description`
+- `research.queries`
+- `keywords.must_include` / `keywords.optional` / `keywords.exclude`
+- `excel_export.dynamic_headers`
+- `scoring_weights`
+
+No major refactor is required for topic changes.
 
 ## Two-Phase Vision
 
-### Domain Flexibility (Important)
-The engine is built to support changing research subjects over time. While the current sample configuration is focused on fertilizer and LCA studies, the architecture is intentionally generic.
-
-This means future work can shift to other topics without rewriting the core pipeline. In practice, users can adapt the system by updating query logic, keyword constraints, year ranges, scoring weights, and dynamic output headers in configuration, while reusing the same retrieval, ranking, and export engine.
-
 ### Phase 1 (Current): AI-Assisted Literature Review Tool
-Phase 1 is designed to reduce repetitive screening tasks and increase consistency in paper evaluation. The tool:
-- runs multi-source paper search from configurable research queries,
-- performs deduplication and year filtering,
-- computes keyword and semantic relevance,
-- combines relevance with citation and recency signals,
-- uses a local LLM to produce dynamic, paper-grounded observations,
-- exports all results to a structured Excel workbook.
+Implemented focus:
+- configurable multi-source paper retrieval,
+- deduplication and quality filtering,
+- semantic ranking + weighted scoring,
+- dynamic field extraction with local LLM,
+- analyst-friendly Excel export.
 
-In development terms, Phase 1 is the evidence preparation layer. It is not limited to one scientific subject. The same mechanics can be reused for different research domains as long as the user provides domain-appropriate query design and scoring configuration.
+Current improvements in progress:
+- stronger extraction consistency,
+- better handling for sparse metadata,
+- tuning prompt behavior per dynamic header,
+- improving reproducibility and observability.
 
-### Phase 2 (Planned): AI-Assisted Life Cycle Inventory (LCI) Maker
-Phase 2 will expand from paper review into inventory construction support for experts. The goal is to help experts build fit-for-purpose LCIs by:
-- reviewing current public studies and papers,
-- extracting useful inventory patterns and assumptions,
-- generating candidate LCI structures that are transparent and editable,
-- providing explicit citations for each suggested component,
-- preserving expert control while accelerating inventory drafting.
+### Phase 2 (Planned): Intelligent LCI Maker
+Planned expansion:
+- assist experts in drafting fit-for-purpose LCI structures,
+- derive inventory inspirations from public studies,
+- keep every suggested inventory element traceable to cited evidence,
+- support expert-in-the-loop validation before finalization.
 
-In short, Phase 2 is intended to move from "finding and understanding evidence" to "building citation-backed inventory assets" for real LCA workflows.
+## Technical Architecture
 
-Phase 2 is expected to be much more extensive than Phase 1. It will focus on guided inventory construction where experts remain in control, but AI accelerates evidence gathering, structure proposal, citation linking, and iterative refinement of candidate inventory elements.
+### Core Modules
+- `main.py`: app bootstrap and run control.
+- `engine/search/search.py`: API retrieval layer (Scopus, OpenAlex, Semantic Scholar).
+- `engine/engine.py`: processing, ranking, local LLM extraction, Excel export.
+- `config/user_config.yaml`: runtime behavior and study-specific setup.
 
-## Why This Architecture
+### Pipeline Flow
+1. Load runtime config and env variables.
+2. Expand each user query to improve retrieval recall.
+3. Fetch candidate records from available APIs.
+4. Normalize records and merge sources.
+5. Remove duplicates by DOI and title similarity.
+6. Apply year + keyword filtering.
+7. Compute semantic similarity using embedding model.
+8. Score records with weighted criteria (keyword/semantic/citation/recency).
+9. Run local LLM extraction for dynamic headers.
+10. Export to Excel with configured columns and formatting.
 
-### Why keep the project domain-agnostic?
-Research priorities change over time. A fixed-topic tool becomes less useful as soon as the subject changes. This project avoids that by keeping the retrieval, filtering, ranking, and extraction engine generic while exposing topic-specific behavior through configuration.
+## Why We Use APIs and Local LLM Together
 
-As a result, one core engine can support multiple study tracks over the lifetime of the project. The current fertilizer-related setup is a reference scenario that validates the workflow, but it is not the final or only target domain.
+### API Layer Rationale
+No single source gives complete literature coverage and consistent metadata quality. Multi-source retrieval increases recall and reduces source bias.
 
-### Why use external APIs?
-The project uses multiple literature APIs because no single source provides complete coverage, metadata consistency, and availability for all topics.
+- Scopus: strong curated indexing and citation context.
+- OpenAlex: broad open access catalog with flexible metadata access.
+- Semantic Scholar: complementary metadata and citation coverage.
 
-- Scopus API: strong indexing and citation ecosystem for scholarly records.
-- OpenAlex API: broad open catalog with useful metadata and transparent access model.
-- Semantic Scholar API: additional coverage and citation-linked metadata.
+### Local LLM Rationale
+The local LLM transforms raw metadata into analyst-ready dynamic fields. It is useful for prototyping and iterative development because it provides:
+- lower recurring cost during rapid testing,
+- control over prompt behavior and output style,
+- easier privacy control in local workflows,
+- fast iteration when refining extraction headers.
 
-Using multiple APIs improves recall, reduces source bias, and allows cross-source enrichment after deduplication.
+Dynamic extraction is paper-grounded by design. If a field is out of scope for a paper, output can be set to `Not applicable`.
 
-### Why use a local LLM?
-The local LLM layer is used to transform raw metadata into review-ready observations per dynamic headers (for example: methodology, key findings, boundaries, impact categories). A local model is useful in development because it enables:
-- lower recurring cost per run,
-- fast iteration on prompt and extraction rules,
-- more control over model behavior,
-- easier privacy management for local data processing.
+## How To Create Effective Queries
+Use boolean queries that combine:
+- concept block A (method or framework),
+- concept block B (topic object),
+- optional context block C (impact/sustainability/region/time).
 
-The extraction behavior is configured to be paper-grounded: dynamic fields should be based on the exact forwarded paper record. If a field is outside scope or unsupported for a paper, the model can return "Not applicable".
-
-## Current Pipeline
-1. Read user configuration from `config/user_config.yaml`.
-2. Expand research queries for better retrieval coverage.
-3. Search APIs (Scopus, OpenAlex, Semantic Scholar).
-4. Normalize and merge records.
-5. Remove duplicates (DOI and high-similarity title checks).
-6. Apply year and keyword-based initial filtering.
-7. Compute semantic similarity against research description.
-8. Score each paper using weighted metrics.
-9. Run local LLM extraction for dynamic analysis fields.
-10. Export final ranked dataset to Excel.
-
-## Repository Structure
-
+### Query Design Pattern
 ```text
-LR/
-  config/
-    user_config.yaml
-  engine/
-    engine.py
-    search/
-      search.py
-  main.py
-  requirements.txt
-  README.md
+("concept A synonym 1" OR "concept A synonym 2" OR ACRONYM)
+AND
+("concept B synonym 1" OR "concept B synonym 2")
+AND
+("context term 1" OR "context term 2")
 ```
 
-## Core Components
+### Example (Current Prototype Topic)
+```text
+("life cycle assessment" OR "life-cycle assessment" OR "life cycle analysis" OR LCA)
+AND
+("controlled release fertilizer" OR "slow release fertilizer" OR CRF OR SRF)
+AND
+("sustainability" OR "environmental impact" OR "GHG emissions")
+```
 
-### `main.py`
-- Loads environment variables.
-- Loads YAML config.
-- Instantiates and runs `LiteratureEngine`.
+### Example (Different Future Topic)
+```text
+("life cycle assessment" OR LCA)
+AND
+("battery recycling" OR "end-of-life battery" OR "lithium-ion recycling")
+AND
+("resource recovery" OR "emissions" OR "circular economy")
+```
 
-### `engine/search/search.py`
-- Handles API integration and retries.
-- Manages query execution per source.
-- Normalizes source-specific metadata into a common record shape.
+## How To Define Keywords and Excel Dynamic Headers
 
-### `engine/engine.py`
-- Query expansion, filtering, deduplication.
-- Semantic ranking with Sentence Transformers.
-- Weighted scoring (keyword, semantic, citation, recency).
-- Local LLM prompt construction and dynamic field extraction.
-- Excel export formatting and post-processing.
+### 1. Keyword Strategy
+Use `keywords` to shape filtering behavior before semantic ranking:
 
-### `config/user_config.yaml`
-- Research description and query list.
-- Year window and keyword constraints.
-- Limits for each pipeline stage.
-- Scoring weights.
-- Local LLM settings.
-- Static and dynamic export headers.
+- `must_include`: high-priority terms that should appear.
+- `optional`: supporting terms that improve ranking but are not mandatory.
+- `exclude`: terms to remove obvious out-of-scope papers.
 
-## Configuration Highlights
+Example:
+```yaml
+keywords:
+  must_include: ["life cycle", "fertilizer"]
+  optional: ["slow release", "controlled release", "biochar"]
+  exclude: ["policy", "editorial"]
+```
 
-### Research & query scope
-You define domain intent in:
-- `research.description`
-- `research.queries`
-- `research.year_min` / `research.year_max`
+For another domain, replace these terms only; pipeline logic stays the same.
 
-To change subjects in future studies, you primarily update these fields and revise `keywords` plus `excel_export.dynamic_headers` to match the new research questions.
+### 2. Dynamic Header Strategy (Excel)
+Use `excel_export.dynamic_headers` to tell the LLM what analysis fields to produce per paper.
 
-### Filtering and limits
-You control throughput using:
-- `limits.max_initial_results_per_source`
-- `limits.max_after_initial_filtering`
-- `limits.max_after_filtering`
-- `limits.max_for_local_llm`
+Example:
+```yaml
+excel_export:
+  dynamic_headers:
+    - key: summary
+      header: Summary
+    - key: methodology
+      header: Methodology
+    - key: key_findings
+      header: Key Findings
+    - key: system_boundaries
+      header: System Boundaries
+    - key: impact_categories
+      header: Impact Categories
+```
 
-### Scoring model
-`scoring_weights` controls ranking behavior:
-- `keyword_match`
-- `semantic_score`
-- `citation_score`
-- `recency_score`
+Guidance:
+- keep header keys short and stable (snake_case),
+- use human-friendly `header` labels for Excel output,
+- avoid redundant fields that ask the same question in different words,
+- keep dynamic fields aligned with your research objective,
+- allow `Not applicable` for out-of-scope fields.
 
-### Dynamic extraction behavior
-`local_llm` controls model execution and handling of non-applicable fields:
-- `enabled`
-- `model`
-- `url`
-- `apply_to_all_export_rows`
-- `not_applicable_text`
+## Configuration Walkthrough
 
-## Installation
+### Minimum Required Blocks
+`config/user_config.yaml` should define:
+- `research`
+- `keywords`
+- `limits`
+- `scoring_weights`
+- `local_llm`
+- `excel_export`
+
+### Local LLM Block Example
+```yaml
+local_llm:
+  enabled: true
+  model: "llama3"
+  url: "http://localhost:11434/api/generate"
+  apply_to_all_export_rows: true
+  not_applicable_text: "Not applicable"
+```
+
+## Setup and Run
 
 ### Prerequisites
 - Python 3.9+
-- Access to one or more literature APIs
-- Local LLM server endpoint (for example, Ollama-compatible endpoint)
+- API keys for at least one source (Scopus optional, Semantic Scholar optional, OpenAlex works with/without email)
+- Local model endpoint for dynamic extraction
 
-### Install dependencies
+### Install
 ```bash
 pip install -r requirements.txt
 ```
 
-### Environment variables
-Create a `.env` file in the project root with only the keys you plan to use:
+### Environment Variables
+Create `.env` in project root:
 
 ```env
 SCOPUS_API_KEY=...
@@ -173,52 +216,46 @@ SEMANTIC_SCHOLAR_API_KEY=...
 OPENALEX_EMAIL=your_email@example.com
 ```
 
-Do not commit real API keys to version control.
-
-## Usage
-Run from the project root:
-
+### Execute
 ```bash
 python main.py
 ```
 
-After completion, the tool writes an Excel output file (configured by `excel_export.filename`, currently `literature_results.xlsx`).
+Output file is controlled by `excel_export.filename` (default in this prototype: `literature_results.xlsx`).
 
-## Output
-The exported workbook combines:
-- static columns (title, year, journal, DOI, source, citations, final score, document type),
-- dynamic columns generated from local LLM observations,
-- formatting improvements such as wrapped text, header styling, and adjusted column widths.
+## Output Model
+The Excel export combines:
+- static metadata columns (title, year, source, DOI, citations, score, and related fields),
+- dynamic LLM-generated analysis columns,
+- formatting improvements for readability (header style, wrapping, width handling).
 
-## Current Limitations (Expected in Development)
-- API metadata quality varies across providers.
-- Some records contain incomplete abstracts or missing fields.
-- Dynamic field quality depends on local model capability and prompt tuning.
-- Sample configuration is currently tuned to a fertilizer/LCA scenario; broader multi-domain preset packs are still pending.
-- No GUI is included yet (CLI workflow only).
+## Improvement Backlog (Current Step)
+- strengthen handling for missing abstracts and sparse records,
+- improve dynamic header instruction quality by field type,
+- add evaluation metrics for extraction consistency,
+- improve explainability for final score composition,
+- prepare GUI layer for non-technical users.
 
-## Planned GUI Direction
-A future GUI is planned to make the workflow easier and more feasible for non-technical users. The interface is expected to support:
-- visual query and filter builder,
-- one-click pipeline execution,
-- interactive review/edit of dynamic fields,
-- citation traceability views,
-- export presets for literature review and future LCI workflows.
+## Planned GUI
+The planned GUI will make study setup and review easier:
+- guided query builder,
+- keyword and header designer,
+- one-click run and progress indicators,
+- review/edit panel for dynamic extraction,
+- evidence and citation traceability views,
+- export profiles for different study types.
 
-## Roadmap
-1. Stabilize Phase 1 extraction quality and error handling.
-2. Add richer evaluation and traceability for dynamic fields.
-3. Introduce GUI for improved usability and adoption.
-4. Start Phase 2 design and prototype for AI-assisted LCI maker.
-5. Build citation-aware LCI drafting workflow from public studies.
+## Future Direction: Any Topic, Any Study Title
+This engine is designed for reuse across research fields. Fertilizer is a prototype case. The same workflow can support health, energy, materials, policy, circular economy, and other domains by changing configuration inputs while preserving the core pipeline.
 
 ## Contribution
-This project is in active development and architecture may evolve. Contributions are welcome in:
+This project is active and evolving. Contributions are welcome for:
 - retrieval quality,
-- ranking and scoring strategies,
-- prompt and extraction reliability,
-- export/report usability,
-- GUI and Phase 2 planning.
+- scoring/ranking strategy,
+- dynamic extraction reliability,
+- observability and evaluation,
+- GUI implementation,
+- Phase 2 LCI design.
 
 ## Disclaimer
-This tool is designed to assist experts, not replace expert judgment. All extracted insights should be reviewed before use in formal analysis or publication.
+This tool assists researchers and experts; it does not replace expert judgment. Outputs should be reviewed before publication, compliance reporting, or decision-making.
