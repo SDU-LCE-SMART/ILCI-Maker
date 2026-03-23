@@ -5,8 +5,9 @@
 | Item | Value |
 |---|---|
 | Project state | In progress and developing phase |
+| Collaborators | Mohammadhossein Narang, Hadis Marami, Benyamin Khoshnevisan |
 | Contact person | mhna@igt.sdu.dk |
-| Open-source plan | This repository will be made open source after the publication paper is submitted. |
+| Open-source plan | This repository will be made open source after the scientific papers are published. |
 
 ## Tool Overview
 This project is a working prototype which already performs end-to-end literature review automation: it accepts configurable research queries, collects records from multiple scholarly APIs, removes duplicates, applies filters, ranks papers with combined scoring logic, runs local LLM extraction for dynamic analysis fields, and exports structured outputs to Excel. The current fertilizer-focused setup is used as a sample prototyping scenario to validate the pipeline against real-world LCA-style search and extraction complexity.
