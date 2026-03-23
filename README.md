@@ -268,3 +268,11 @@ This project is active and evolving. Contributions are welcome for:
 
 ## Disclaimer
 This tool assists researchers and experts; it does not replace expert judgment. Outputs should be reviewed before publication, compliance reporting, or decision-making.
+
+## Acknowledgements
+
+This work is part of the **Agro4Agri** project at **University of Southern Denmark**..
+
+**Agro4Agri** is an EU-funded project set to revolutionize plant nutrition and protection through cutting-edge nano and biotechnology. Within 4 years, by enhancing fertilizer efficiency and developing species-specific nematicides, the project aims to deliver sustainable and innovative solutions under the Safe and Sustainable by Design (SSbD) framework.
+
+🔗 Learn more about the project: [https://agro4agri.eu/]
