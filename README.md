@@ -6,7 +6,7 @@
 |---|---|
 | Project state | In progress and developing phase |
 | Collaborators | Mohammadhossein Narang, Hadis Marami, Benyamin Khoshnevisan |
-| Contact person | mhna@igt.sdu.dk |
+| Contact person | mhna@igt.sdu.dk (If you are williing to use BETA version please contact us.)|
 | Open-source plan | This repository will be made open source after the scientific papers are published. |
 
 ## Tool Overview
