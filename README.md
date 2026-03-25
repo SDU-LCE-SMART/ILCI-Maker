@@ -6,7 +6,7 @@
 |---|---|
 | Project state | In progress and developing phase |
 | Collaborators | Mohammadhossein Narang, Hadis Marami, Benyamin Khoshnevisan |
-| Contact person | mhna@igt.sdu.dk (If you are willing to use BETA version please contact us.)|
+| Contact person | mhna@igt.sdu.dk, bekh@igt.sdu.dk (If you are willing to use BETA version please contact us.)|
 | Open-source plan | This repository will be made open source after the scientific papers are published. |
 
 ## Tool Overview
@@ -271,8 +271,6 @@ This tool assists researchers and experts; it does not replace expert judgment. 
 
 ## Acknowledgements
 
-This work is part of the **Agro4Agri** project at **University of Southern Denmark**..
-
-**Agro4Agri** is an EU-funded project set to revolutionize plant nutrition and protection through cutting-edge nano and biotechnology. Within 4 years, by enhancing fertilizer efficiency and developing species-specific nematicides, the project aims to deliver sustainable and innovative solutions under the Safe and Sustainable by Design (SSbD) framework.
+This project has received funding from the European Union’s Horizon Europe Research and Innovation programme under AGRO4AGRI (Grant Agreement No. 101130890). Funded by the European Union. Methodes and logics expressed are however those of the author(s) only and do not necessarily reflect those of the European Union or the European Health and Digital Executive Agency (HADEA). Neither the European Union nor the granting authority can be held responsible for them.
 
 🔗 Learn more about the project: [https://agro4agri.eu/]
