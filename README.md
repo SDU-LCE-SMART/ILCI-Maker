@@ -20,14 +20,6 @@ The project is still in the improvement stage and is intentionally evolving. The
 - Current phase: Phase 1 (AI-assisted literature review engine)
 - Next phase: Phase 2 (AI-assisted, citation-grounded LCI maker)
 
-
-###################
-
-# AI-Assisted Literature Mining Pipeline
-
-## What This Project Is
-This repository implements a working, code-driven literature mining system for structured evidence extraction.
-
 It is a **hybrid retrieval-augmented information extraction pipeline** that combines:
 - multi-source literature retrieval,
 - deterministic filtering and scoring,
@@ -211,66 +203,6 @@ The pipeline writes `literature_results.xlsx` with:
 3. Add reproducibility run manifest (config hash + timestamp + source counts).
 4. Add optional benchmark mode against manually curated gold labels.
 
-###################
-
-
-
-
-## Evidence That the Prototype Is Implemented
-The repository includes executable code paths, not placeholder stubs:
-
-- Pipeline entrypoint in `main.py` that loads environment/config and executes the engine.
-- Retrieval engine in `engine/search/search.py` with real API requests, retry logic, pagination, and source-specific metadata mapping.
-- Processing and ranking engine in `engine/engine.py` for query expansion, year filtering, duplicate removal, keyword filtering, semantic ranking, and weighted scoring.
-- Local LLM extraction in `engine/engine.py` to fill dynamic review fields using paper-grounded prompts.
-- Export pipeline in `engine/engine.py` that writes formatted Excel output using configured static and dynamic headers.
-- User-driven behavior in `config/user_config.yaml` so study setup can be changed without code edits.
-
-This means the system is already usable for iterative research work while engineering improvements continue.
-
-## Why Fertilizer Is Mentioned Today
-Fertilizer/LCA is currently a sample prototype scenario used to test difficult conditions (mixed terminology, domain-specific keywords, and structured extraction needs). It is not a hard limit.
-
-To switch domains, update configuration only:
-- `research.description`
-- `research.queries`
-- `keywords.must_include` / `keywords.optional` / `keywords.exclude`
-- `excel_export.dynamic_headers`
-- `scoring_weights`
-
-No major refactor is required for topic changes.
-
-## Two-Phase Vision
-
-### Phase 1 (Current): AI-Assisted Literature Review Tool
-Implemented focus:
-- configurable multi-source paper retrieval,
-- deduplication and quality filtering,
-- semantic ranking + weighted scoring,
-- dynamic field extraction with local LLM,
-- analyst-friendly Excel export.
-
-Current improvements in progress:
-- stronger extraction consistency,
-- better handling for sparse metadata,
-- tuning prompt behavior per dynamic header,
-- improving reproducibility and observability.
-
-### Phase 2 (Planned): Intelligent LCI Maker
-Planned expansion:
-- assist experts in drafting fit-for-purpose LCI structures,
-- derive inventory inspirations from public studies,
-- keep every suggested inventory element traceable to cited evidence,
-- support expert-in-the-loop validation before finalization.
-
-## Technical Architecture
-
-### Core Modules
-- `main.py`: app bootstrap and run control.
-- `engine/search/search.py`: API retrieval layer (Scopus, OpenAlex, Semantic Scholar).
-- `engine/engine.py`: processing, ranking, local LLM extraction, Excel export.
-- `config/user_config.yaml`: runtime behavior and study-specific setup.
-
 ### Pipeline Flow
 1. Load runtime config and env variables.
 2. Expand each user query to improve retrieval recall.
@@ -292,15 +224,6 @@ No single source gives complete literature coverage and consistent metadata qual
 - OpenAlex: broad open access catalog with flexible metadata access.
 - Semantic Scholar: complementary metadata and citation coverage.
 
-### Local LLM Rationale
-The local LLM transforms raw metadata into analyst-ready dynamic fields. It is useful for prototyping and iterative development because it provides:
-- lower recurring cost during rapid testing,
-- control over prompt behavior and output style,
-- easier privacy control in local workflows,
-- fast iteration when refining extraction headers.
-
-Dynamic extraction is paper-grounded by design. If a field is out of scope for a paper, output can be set to `Not applicable`.
-
 ## How To Create Effective Queries
 Use boolean queries that combine:
 - concept block A (method or framework),
@@ -316,16 +239,7 @@ AND
 ("context term 1" OR "context term 2")
 ```
 
-### Example (Current Prototype Topic)
-```text
-("life cycle assessment" OR "life-cycle assessment" OR "life cycle analysis" OR LCA)
-AND
-("controlled release fertilizer" OR "slow release fertilizer" OR CRF OR SRF)
-AND
-("sustainability" OR "environmental impact" OR "GHG emissions")
-```
-
-### Example (Different Future Topic)
+### Example
 ```text
 ("life cycle assessment" OR LCA)
 AND
